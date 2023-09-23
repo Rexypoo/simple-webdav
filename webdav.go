@@ -5,21 +5,22 @@ import (
         "fmt"
         "log"
         "net/http"
-
+        "syscall"
         "golang.org/x/net/webdav"
-        //"golang.org/x/net"
 )
 
-var dir string
 
 func main() {
 
         dirFlag := flag.String("d", "/dav", "Directory to serve from. Default is /dav")
         httpPort := flag.Int("p", 80, "Port to serve on (Plain HTTP)")
+        umaskFlag := flag.Int("U", 7, "Umask for newly created files and folders")
+
+        syscall.Umask(*umaskFlag)
 
         flag.Parse()
 
-        dir = *dirFlag
+        dir := *dirFlag
 
         srv := &webdav.Handler{
                 FileSystem: webdav.Dir(dir),
